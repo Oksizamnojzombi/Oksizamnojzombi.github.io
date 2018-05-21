@@ -484,21 +484,21 @@ function startScreen() {
     function pointerUp(){
         redButton.interactive = false;
         startAnimation = performance.now();
-        requestAnimationFrame(startGameAnimation);
+        requestAnimationFrame(startFirstAnimation);
         while (generalContainer.children[0]){
             generalContainer.children[0].destroy();
         }
         drawGame();
     }
 
-    let startButtonTextStyle = new PIXI.TextStyle({
+    let redButtonTextStyle = new PIXI.TextStyle({
         fontFamily: "Arial",
         fontSize: 72,
         fill: "#ffffff"
     });
-    let startButtonText = new PIXI.Text("Play for 60", startButtonTextStyle);
-    startButtonText.position.set(370, 235);
-    startFrameContainer.addChild(startButtonText);
+    let redButtonText = new PIXI.Text("Play for 60", redButtonTextStyle);
+    redButtonText.position.set(370, 235);
+    startFrameContainer.addChild(redButtonText);
 
     let howToPlayTextStyle = new PIXI.TextStyle({
         fontFamily: "Arial",
@@ -556,14 +556,14 @@ function finishScreen(){
     app.stage.addChild(finishFrameContainer);
 }
 
-function startGameAnimation(newFrame){
+function startFirstAnimation(newFrame){
     let progress = (newFrame - startAnimation)/1000 * 2;
 
     if (progress >= 1) {
         progress = 1;
         greyGraphics.interactive = false;
     } else {
-        requestAnimationFrame(startGameAnimation);
+        requestAnimationFrame(startFirstAnimation);
     }
 
     greyGraphics.alpha = (1-progress) * 0.5;
