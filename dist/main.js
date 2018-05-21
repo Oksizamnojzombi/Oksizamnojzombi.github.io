@@ -14,8 +14,9 @@ function loadRes(link) {
 function setup(loader, res) {
     createCanvas(loader, res);
     drawBg(loader, res);
-    drawGame(loader, res);
     drawCharacter(loader, res);
+    startScreen();
+    finishScreen();
 }
 
 function createCanvas(loader, res) {
@@ -62,8 +63,8 @@ function drawBg(loader, res) {
     containerScratch.x = app.screen.width - containerScratch.width + 67;
     containerScratch.y = app.screen.height - 552;
 
-    gameGroup = new PIXI.Container();
-    app.stage.addChild(gameGroup);
+    generalContainer = new PIXI.Container();
+    app.stage.addChild(generalContainer);
 
     containerBgField = new PIXI.Container();
     app.stage.addChild(containerBgField);
@@ -76,29 +77,30 @@ var winSymbol = void 0;
 var winCoin = void 0;
 var backgrMask = void 0;
 var containerBgField = void 0;
-var gameGroup = void 0;
+var generalContainer = void 0;
+var openCount = void 0;
 
 function drawGame(loader, res) {
     symbolList = [];
-    // openCount = 0;
+    openCount = 0;
     winSymbol = -1;
     winCoin = 25;
 
     var rnd = Math.random() * 100;
 
-    if (rnd <= 2) {
+    if (rnd < 2) {
         winSymbol = 4;
         winCoin = 100;
-    } else if (rnd <= 6) {
+    } else if (rnd < 6) {
         winSymbol = 3;
         winCoin += 50;
-    } else if (rnd <= 12) {
+    } else if (rnd < 12) {
         winSymbol = 2;
         winCoin += 35;
-    } else if (rnd <= 20) {
+    } else if (rnd < 20) {
         winSymbol = 1;
         winCoin += 30;
-    } else if (rnd <= 30) {
+    } else if (rnd < 30) {
         winCoin += 25;
         winSymbol = 0;
     } else {
@@ -143,14 +145,10 @@ function drawGame(loader, res) {
     renderTexture();
     drawSymbols();
     drawBonusSymbol();
-
     containerBgField.addChild(backgrMask);
 }
 
 function drawCharacter(loader, res) {
-    // let app = new PIXI.Application();
-    // document.body.appendChild(app.view);
-
     character = new PIXI.spine.Spine(res.char.spineData);
     // instantiate the spine animation
     character.skeleton.setToSetupPose();
@@ -189,7 +187,7 @@ function drawDescription() {
 
     var msgDescriptionStyle = new PIXI.TextStyle({
         fontFamily: "Arial",
-        fontSize: 36,
+        fontSize: 46,
         fill: "#f45b4e"
     });
 
@@ -221,9 +219,7 @@ function drawSymbols(loader, res) {
         // filedBG.x = (i % 3) * 335;
         // filedBG.y = Math.floor(i / 3) * 330;
         filedBG.position.set(positions[i][0], positions[i][1]);
-
         app.stage.addChild(filedBG);
-        // gameGroup.addChild(filedBG);
 
         var symbolID = symbolList[i];
         var symbol = new PIXI.Sprite(loadRes(elements[symbolID]));
@@ -233,7 +229,7 @@ function drawSymbols(loader, res) {
         symbol.position.set(positions[i][0], positions[i][1]);
 
         app.stage.addChild(symbol);
-        gameGroup.addChild(filedBG, symbol);
+        generalContainer.addChild(filedBG, symbol);
 
         backgrMask.addChild(filedBG, symbol);
 
@@ -241,7 +237,7 @@ function drawSymbols(loader, res) {
         graphics.alpha = 0;
         graphics.beginFill(0x000000);
         graphics.drawRect(positions[i][0] - 140, positions[i][1] - 140, 280, 280);
-        gameGroup.addChild(graphics);
+        generalContainer.addChild(graphics);
         // graphics.anchor.set(0.5);
         // graphics.x = (i % 3) * 335;
         // graphics.y = Math.floor(i / 3) * 330;
@@ -272,13 +268,12 @@ function drawSymbols(loader, res) {
             var length = ((minPos.x - maxPos.x) ** 2 + (minPos.y - maxPos.y) ** 2) ** 0.5;
             if (length >= 280) {
 
-                gameGroup.addChild(filedBG, symbol);
-                // containerBgField.addChild(filedBG, symbol);
+                generalContainer.addChild(filedBG, symbol);
                 graphics.destroy();
 
                 if (isWinSymbol) changeAnimation('red_happy_card');else changeAnimation('red_disappointed');
 
-                // if(++openCount == 7) finishGame();
+                if (++openCount == 7) finishGame();
             }
         };
         graphics.on('touchmove', touchmove);
@@ -296,9 +291,6 @@ function drawSymbols(loader, res) {
     for (var i = 0; i < 6; i++) {
         _loop(i);
     }
-
-    // containerBgField.x = (app.screen.width - containerBgField.width) + 67;
-    // containerBgField.y = (app.screen.height) - 560;
 }
 
 function drawBonusSymbol() {
@@ -315,7 +307,7 @@ function drawBonusSymbol() {
     graphics.alpha = 0;
     graphics.beginFill(0x000000);
     graphics.drawRect(614, 367, 368, 368);
-    gameGroup.addChild(graphics);
+    generalContainer.addChild(graphics);
 
     var minPos = void 0,
         maxPos = void 0;
@@ -341,7 +333,7 @@ function drawBonusSymbol() {
             graphics.destroy();
             changeAnimation('red_happy_bonus');
 
-            // if(++openCount == 7) finishGame();
+            if (++openCount == 7) finishGame();
         }
     };
     graphics.on('touchmove', touchmove);
@@ -364,15 +356,15 @@ function renderTexture() {
     var renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
     var renderTextureSprite = new PIXI.Sprite(renderTexture);
     containerBgField.addChild(renderTextureSprite);
-    gameGroup.addChild(renderTextureSprite);
+    generalContainer.addChild(renderTextureSprite);
 
     backgrMask = new PIXI.Sprite();
     backgrMask.mask = renderTextureSprite;
 
-    gameGroup.interactive = true;
-    gameGroup.on('touchstart', pointerDown);
-    gameGroup.on('touchend', pointerUp);
-    gameGroup.on('touchmove', function (event) {
+    generalContainer.interactive = true;
+    generalContainer.on('touchstart', pointerDown);
+    generalContainer.on('touchend', pointerUp);
+    generalContainer.on('touchmove', function (event) {
         pointerMove(event);
         if (currentAnimation == 'idle') {
             currentAnimation = 'worry';
@@ -381,9 +373,9 @@ function renderTexture() {
         }
     });
 
-    gameGroup.on('pointerover', pointerDown);
-    gameGroup.on('pointerout', pointerUp);
-    gameGroup.on('pointermove', pointerMove);
+    generalContainer.on('pointerover', pointerDown);
+    generalContainer.on('pointerout', pointerUp);
+    generalContainer.on('pointermove', pointerMove);
 
     var brush = new PIXI.Graphics();
     brush.beginFill(0xffffff);
@@ -421,4 +413,149 @@ function changeAnimation(key) {
     setTimeout(function () {
         currentAnimation = 'idle';
     }, 2000);
+}
+
+var startFrameContainer = void 0;
+var startAnimation = void 0;
+var greyGraphics = void 0;
+function startScreen() {
+    // set a fill and a line style again and draw a rectangle
+    greyGraphics = new PIXI.Graphics();
+    greyGraphics.beginFill(0x000000, 0.6);
+    greyGraphics.drawRect(0, 0, app.screen.width, app.screen.height);
+    greyGraphics.interactive = true;
+    app.stage.addChild(greyGraphics);
+
+    startFrameContainer = new PIXI.Container();
+    app.stage.addChild(startFrameContainer);
+
+    startFrameContainer.x = 0;
+    startFrameContainer.y = 1530;
+
+    var startFrameBg = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_frame2.png'));
+    startFrameBg.position.set(0, 0);
+    startFrameContainer.addChild(startFrameBg);
+
+    var redButton = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_button.png'));
+    redButton.interactive = true;
+    redButton.position.set(25, 200);
+    redButton.name = 'redButton';
+    startFrameContainer.addChild(redButton);
+
+    redButton.on('touchend', pointerUp);
+    redButton.on('mouseup', pointerUp);
+
+    function pointerUp() {
+        redButton.interactive = false;
+        startAnimation = performance.now();
+        requestAnimationFrame(startGameAnimation);
+        while (generalContainer.children[0]) {
+            generalContainer.children[0].destroy();
+        }
+        drawGame();
+    }
+
+    var startButtonTextStyle = new PIXI.TextStyle({
+        fontFamily: "Arial",
+        fontSize: 72,
+        fill: "#ffffff"
+    });
+    var startButtonText = new PIXI.Text("Play for 60", startButtonTextStyle);
+    startButtonText.position.set(370, 235);
+    startFrameContainer.addChild(startButtonText);
+
+    var howToPlayTextStyle = new PIXI.TextStyle({
+        fontFamily: "Arial",
+        fontSize: 72,
+        fill: "#ff8729"
+    });
+    var howToPlayText = new PIXI.Text("How To Play", howToPlayTextStyle);
+    howToPlayText.position.set(437, 58);
+    startFrameContainer.addChild(howToPlayText);
+
+    var coin = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_coin_icon_big.png'));
+    // coin.scale.set(0.6);
+    coin.position.set(726, 253);
+    startFrameContainer.addChild(coin);
+
+    var helpSymbol = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_question_icon.png'));
+    helpSymbol.position.set(333, 60);
+    startFrameContainer.addChild(helpSymbol);
+}
+
+var finishFrameContainer = void 0;
+var coinText = void 0;
+function finishScreen() {
+    finishFrameContainer = new PIXI.Container();
+    finishFrameContainer.visible = false;
+
+    var finishBg = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_frame1.png'));
+    finishBg.position.set(0, 400);
+    finishFrameContainer.addChild(finishBg);
+
+    var WinTextStyle = new PIXI.TextStyle({
+        fontFamily: "Arial",
+        fontSize: 116,
+        fill: "#f45b4e"
+    });
+    var winText = new PIXI.Text("YOU WIN", WinTextStyle);
+    winText.position.set(297, 433);
+    finishFrameContainer.addChild(winText);
+
+    var coinTextStyle = new PIXI.TextStyle({
+        fontFamily: "Arial",
+        fontSize: 126,
+        fill: "#311d1f"
+    });
+    coinText = new PIXI.Text('25', coinTextStyle);
+    coinText.position.set(553, 533);
+    coinText.anchor.set(1, 0);
+    finishFrameContainer.addChild(coinText);
+
+    var winCoinSymbol = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_coin_icon_big.png'));
+    winCoinSymbol.position.set(570, 560);
+    finishFrameContainer.addChild(winCoinSymbol);
+
+    finishFrameContainer.position.set(47, 520);
+    app.stage.addChild(finishFrameContainer);
+}
+
+function startGameAnimation(newFrame) {
+    var progress = (newFrame - startAnimation) / 1000 * 2;
+
+    if (progress >= 1) {
+        progress = 1;
+        greyGraphics.interactive = false;
+    } else {
+        requestAnimationFrame(startGameAnimation);
+    }
+
+    greyGraphics.alpha = (1 - progress) * 0.5;
+    finishFrameContainer.y = 220 - 560 * progress;
+    startFrameContainer.y = 1525 + 400 * progress;
+}
+
+function finishGameAnimation(newFrame) {
+    var progress = (newFrame - startAnimation) / 1000 * 2;
+
+    if (progress >= 1) {
+        progress = 1;
+    } else {
+        requestAnimationFrame(finishGameAnimation);
+    }
+
+    finishFrameContainer.y = 220 - 560 * (1 - progress);
+    greyGraphics.alpha = progress * 0.5;
+    startFrameContainer.y = 1525 + 400 * (1 - progress);
+}
+
+function finishGame() {
+    startFrameContainer.getChildByName('redButton').interactive = true;
+    greyGraphics.interactive = true;
+
+    finishFrameContainer.visible = true;
+    coinText.text = '' + winCoin;
+
+    startAnimation = performance.now();
+    requestAnimationFrame(finishGameAnimation);
 }
