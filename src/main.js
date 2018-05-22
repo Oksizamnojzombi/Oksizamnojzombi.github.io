@@ -12,8 +12,8 @@ let positions = [
     [889, 1703]
 ];
 let elements = [
-    "assets/img/location/magic_forest_bow.png",
     "assets/img/location/magic_forest_bonfire.png",
+    "assets/img/location/magic_forest_bow.png",
     "assets/img/location/magic_forest_leaf.png",
     "assets/img/location/magic_forest_rope.png",
     "assets/img/location/magic_forest_tent.png"
@@ -220,8 +220,8 @@ function drawDescription() {
     generalContainer.addChild(descr_container);
 
     let msgDescriptionStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
-        fontSize: 46,
+        fontFamily: "DRAguSansBlack",
+        fontSize: 52,
         fill: "#f45b4e",
     });
 
@@ -492,7 +492,7 @@ function startScreen(loader, res) {
     }
 
     let redButtonTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 72,
         fill: "#ffffff"
     });
@@ -501,7 +501,7 @@ function startScreen(loader, res) {
     startFrameContainer.addChild(redButtonText);
 
     let howToPlayTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 72,
         fill: "#ff8729"
     });
@@ -530,7 +530,7 @@ function finishScreen(loader, res){
     finishFrameContainer.addChild(finishBg);
 
     let WinTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 116,
         fill: "#f45b4e"
     });
@@ -539,7 +539,7 @@ function finishScreen(loader, res){
     finishFrameContainer.addChild(winText);
 
     let coinTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 126,
         fill: "#311d1f"
     });

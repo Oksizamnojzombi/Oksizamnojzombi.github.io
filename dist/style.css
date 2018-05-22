@@ -1,14 +1,15 @@
+@font-face {
+    font-family: "DRAguSansBlack";
+    src: url("../assets/fonts/DRAguSans-Black.ttf") format('truetype');
+}
 * {
     box-sizing: border-box;
-    max-resolution: 0;
     padding: 0;
 }
 
 body {
     background-color: #000;
-    fontFamily: "Arial";
-    fontSize: 52;
-    color: #f45b4e;
+    font-family: DRAguSansBlack;
 }
 
 canvas {
@@ -18,4 +19,7 @@ canvas {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.text {
+    font-family: DRAguSansBlack;
 }

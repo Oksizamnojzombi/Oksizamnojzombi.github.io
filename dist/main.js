@@ -6,7 +6,7 @@ var backgrMask = void 0;
 var containerBgField = void 0;
 var generalContainer = void 0;
 var positions = [[214, 1366], [552, 1366], [889, 1366], [214, 1703], [552, 1703], [889, 1703]];
-var elements = ["assets/img/location/magic_forest_bow.png", "assets/img/location/magic_forest_bonfire.png", "assets/img/location/magic_forest_leaf.png", "assets/img/location/magic_forest_rope.png", "assets/img/location/magic_forest_tent.png"];
+var elements = ["assets/img/location/magic_forest_bonfire.png", "assets/img/location/magic_forest_bow.png", "assets/img/location/magic_forest_leaf.png", "assets/img/location/magic_forest_rope.png", "assets/img/location/magic_forest_tent.png"];
 
 PIXI.loader.add('char', 'assets/img/character/red.json').add(elements).add(["assets/img/magic_forest_bg.jpg", "assets/img/magic_forest_winner_frame.png", "assets/img/magic_forest_frame_for_text.png", "assets/img/magic_forest_frame.png", "assets/img/magic_forest_win_up_to_100.png", "assets/img/location/magic_forest_scratch_frame.png", "assets/img/location/magic_forest_scratch_frame_big.png", "assets/img/location/magic_forest_frame2.png", "assets/img/location/magic_forest_button.png", "assets/img/location/magic_forest_question_icon.png", "assets/img/location/magic_forest_coin_icon_big.png", "assets/img/location/magic_forest_frame1.png"]).load(setup);
 
@@ -186,8 +186,8 @@ function drawDescription() {
     generalContainer.addChild(descr_container);
 
     var msgDescriptionStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
-        fontSize: 46,
+        fontFamily: "DRAguSansBlack",
+        fontSize: 52,
         fill: "#f45b4e"
     });
 
@@ -456,7 +456,7 @@ function startScreen(loader, res) {
     }
 
     var redButtonTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 72,
         fill: "#ffffff"
     });
@@ -465,7 +465,7 @@ function startScreen(loader, res) {
     startFrameContainer.addChild(redButtonText);
 
     var howToPlayTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 72,
         fill: "#ff8729"
     });
@@ -494,7 +494,7 @@ function finishScreen(loader, res) {
     finishFrameContainer.addChild(finishBg);
 
     var WinTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 116,
         fill: "#f45b4e"
     });
@@ -503,7 +503,7 @@ function finishScreen(loader, res) {
     finishFrameContainer.addChild(winText);
 
     var coinTextStyle = new PIXI.TextStyle({
-        fontFamily: "Arial",
+        fontFamily: "DRAguSansBlack",
         fontSize: 126,
         fill: "#311d1f"
     });
