@@ -2,12 +2,15 @@
 
 var app = void 0;
 var character = void 0;
+var backgrMask = void 0;
+var containerBgField = void 0;
+var generalContainer = void 0;
 var positions = [[214, 1366], [552, 1366], [889, 1366], [214, 1703], [552, 1703], [889, 1703]];
 var elements = ["assets/img/location/magic_forest_bow.png", "assets/img/location/magic_forest_bonfire.png", "assets/img/location/magic_forest_leaf.png", "assets/img/location/magic_forest_rope.png", "assets/img/location/magic_forest_tent.png"];
 
 PIXI.loader.add('char', 'assets/img/character/red.json').add(elements).add(["assets/img/magic_forest_bg.jpg", "assets/img/magic_forest_winner_frame.png", "assets/img/magic_forest_frame_for_text.png", "assets/img/magic_forest_frame.png", "assets/img/magic_forest_win_up_to_100.png", "assets/img/location/magic_forest_scratch_frame.png", "assets/img/location/magic_forest_scratch_frame_big.png", "assets/img/location/magic_forest_frame2.png", "assets/img/location/magic_forest_button.png", "assets/img/location/magic_forest_question_icon.png", "assets/img/location/magic_forest_coin_icon_big.png", "assets/img/location/magic_forest_frame1.png"]).load(setup);
 
-function loadRes(link) {
+function loadImg(link) {
     return PIXI.loader.resources[link].texture;
 }
 
@@ -15,8 +18,8 @@ function setup(loader, res) {
     createCanvas(loader, res);
     drawBg(loader, res);
     drawCharacter(loader, res);
-    startScreen();
-    finishScreen();
+    startScreen(loader, res);
+    finishScreen(loader, res);
 }
 
 function createCanvas(loader, res) {
@@ -25,29 +28,29 @@ function createCanvas(loader, res) {
 }
 
 function drawBg(loader, res) {
-    var bg = new PIXI.Sprite(loadRes("assets/img/magic_forest_bg.jpg"));
+    var bg = new PIXI.Sprite(loadImg("assets/img/magic_forest_bg.jpg"));
     bg.x += -152;
     app.stage.addChild(bg);
 
-    var title = new PIXI.Sprite(loadRes("assets/img/magic_forest_win_up_to_100.png"));
+    var title = new PIXI.Sprite(loadImg("assets/img/magic_forest_win_up_to_100.png"));
     title.position.set(159, 40);
     app.stage.addChild(title);
 
-    var bg_description = new PIXI.Sprite(loadRes("assets/img/magic_forest_frame_for_text.png"));
+    var bg_description = new PIXI.Sprite(loadImg("assets/img/magic_forest_frame_for_text.png"));
     bg_description.position.set(56, 1043);
     bg_description.scale.set(0.98, 1);
     app.stage.addChild(bg_description);
 
-    var winner_bg = new PIXI.Sprite(loadRes("assets/img/magic_forest_winner_frame.png"));
+    var winner_bg = new PIXI.Sprite(loadImg("assets/img/magic_forest_winner_frame.png"));
     winner_bg.position.set(526, 140);
     app.stage.addChild(winner_bg);
 
-    var scratch_bg = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_scratch_frame_big.png'));
+    var scratch_bg = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_scratch_frame_big.png'));
     scratch_bg.position.set(799, 553);
     scratch_bg.anchor.set(0.5);
     app.stage.addChild(scratch_bg);
 
-    var scratch_frame_bg = loadRes("assets/img/location/magic_forest_scratch_frame.png");
+    var scratch_frame_bg = loadImg("assets/img/location/magic_forest_scratch_frame.png");
     var containerScratch = new PIXI.Container();
     app.stage.addChild(containerScratch);
 
@@ -75,9 +78,6 @@ var symbolList = void 0;
 var currentAnimation = 'idle';
 var winSymbol = void 0;
 var winCoin = void 0;
-var backgrMask = void 0;
-var containerBgField = void 0;
-var generalContainer = void 0;
 var openCount = void 0;
 
 function drawGame(loader, res) {
@@ -141,11 +141,11 @@ function drawGame(loader, res) {
         }
     }
 
-    drawDescription();
     renderTexture();
+    drawDescription();
     drawSymbols();
     drawBonusSymbol();
-    containerBgField.addChild(backgrMask);
+    generalContainer.addChild(backgrMask);
 }
 
 function drawCharacter(loader, res) {
@@ -183,7 +183,7 @@ function drawCharacter(loader, res) {
 function drawDescription() {
     var descr_container = new PIXI.Container();
     descr_container.position.set(88, 1071);
-    containerBgField.addChild(descr_container);
+    generalContainer.addChild(descr_container);
 
     var msgDescriptionStyle = new PIXI.TextStyle({
         fontFamily: "Arial",
@@ -199,7 +199,7 @@ function drawDescription() {
     win_prize.position.set(543, 0);
     descr_container.addChild(win_prize);
 
-    var msgDescriptionImg = new PIXI.Sprite(loadRes(elements[winSymbol]));
+    var msgDescriptionImg = new PIXI.Sprite(loadImg(elements[winSymbol]));
     msgDescriptionImg.position.set(453, -10);
     msgDescriptionImg.scale.set(0.3);
 
@@ -210,8 +210,8 @@ function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function drawSymbols(loader, res) {
-    var elementBg = loadRes("assets/img/magic_forest_frame.png");
+function drawSymbols() {
+    var elementBg = loadImg("assets/img/magic_forest_frame.png");
 
     var _loop = function _loop(i) {
         var filedBG = new PIXI.Sprite(elementBg);
@@ -222,7 +222,7 @@ function drawSymbols(loader, res) {
         app.stage.addChild(filedBG);
 
         var symbolID = symbolList[i];
-        var symbol = new PIXI.Sprite(loadRes(elements[symbolID]));
+        var symbol = new PIXI.Sprite(loadImg(elements[symbolID]));
         symbol.anchor.set(0.5);
         // symbol.x = (i % 3) * 335;
         // symbol.y = Math.floor(i / 3) * 330;
@@ -273,7 +273,7 @@ function drawSymbols(loader, res) {
 
                 if (isWinSymbol) changeAnimation('red_happy_card');else changeAnimation('red_disappointed');
 
-                if (++openCount == 7) finishGame();
+                if (++openCount === 7) finishGame();
             }
         };
         graphics.on('touchmove', touchmove);
@@ -294,10 +294,10 @@ function drawSymbols(loader, res) {
 }
 
 function drawBonusSymbol() {
-    var bonusBG = new PIXI.Sprite(loadRes("assets/img/magic_forest_winner_frame.png"));
+    var bonusBG = new PIXI.Sprite(loadImg("assets/img/magic_forest_winner_frame.png"));
     bonusBG.position.set(526, 140);
 
-    var symbol = new PIXI.Sprite(loadRes(elements[winSymbol]));
+    var symbol = new PIXI.Sprite(loadImg(elements[winSymbol]));
     symbol.position.set(800, 590);
     symbol.anchor.set(0.5);
 
@@ -329,11 +329,11 @@ function drawBonusSymbol() {
         if (pos.y > maxPos.y) maxPos.y = pos.y;
         var length = ((minPos.x - maxPos.x) ** 2 + (minPos.y - maxPos.y) ** 2) ** 0.5;
         if (length >= 440) {
-            containerBgField.addChild(bonusBG, symbol);
+            generalContainer.addChild(bonusBG, symbol);
             graphics.destroy();
             changeAnimation('red_happy_bonus');
 
-            if (++openCount == 7) finishGame();
+            if (++openCount === 7) finishGame();
         }
     };
     graphics.on('touchmove', touchmove);
@@ -353,9 +353,9 @@ randomInt();
 
 var dragging = false;
 function renderTexture() {
-    var renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
-    var renderTextureSprite = new PIXI.Sprite(renderTexture);
-    containerBgField.addChild(renderTextureSprite);
+    var renderTextureMask = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
+    var renderTextureSprite = new PIXI.Sprite(renderTextureMask);
+    // containerBgField.addChild(renderTextureSprite);
     generalContainer.addChild(renderTextureSprite);
 
     backgrMask = new PIXI.Sprite();
@@ -385,7 +385,7 @@ function renderTexture() {
     function pointerMove(event) {
         if (dragging) {
             brush.position.copy(event.data.global);
-            app.renderer.render(brush, renderTexture, false, null, false);
+            app.renderer.render(brush, renderTextureMask, false, null, false);
         }
     }
 
@@ -418,7 +418,7 @@ function changeAnimation(key) {
 var startFrameContainer = void 0;
 var startAnimation = void 0;
 var greyGraphics = void 0;
-function startScreen() {
+function startScreen(loader, res) {
     // set a fill and a line style again and draw a rectangle
     greyGraphics = new PIXI.Graphics();
     greyGraphics.beginFill(0x000000, 0.6);
@@ -432,11 +432,11 @@ function startScreen() {
     startFrameContainer.x = 0;
     startFrameContainer.y = 1530;
 
-    var startFrameBg = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_frame2.png'));
+    var startFrameBg = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_frame2.png'));
     startFrameBg.position.set(0, 0);
     startFrameContainer.addChild(startFrameBg);
 
-    var redButton = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_button.png'));
+    var redButton = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_button.png'));
     redButton.interactive = true;
     redButton.position.set(25, 200);
     redButton.name = 'redButton';
@@ -473,24 +473,24 @@ function startScreen() {
     howToPlayText.position.set(437, 58);
     startFrameContainer.addChild(howToPlayText);
 
-    var coin = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_coin_icon_big.png'));
+    var coin = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_coin_icon_big.png'));
     // coin.scale.set(0.6);
     coin.position.set(726, 253);
     startFrameContainer.addChild(coin);
 
-    var helpSymbol = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_question_icon.png'));
+    var helpSymbol = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_question_icon.png'));
     helpSymbol.position.set(333, 60);
     startFrameContainer.addChild(helpSymbol);
 }
 
 var finishFrameContainer = void 0;
 var coinText = void 0;
-function finishScreen() {
+function finishScreen(loader, res) {
     finishFrameContainer = new PIXI.Container();
     finishFrameContainer.visible = false;
 
-    var finishBg = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_frame1.png'));
-    finishBg.position.set(0, 400);
+    var finishBg = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_frame1.png'));
+    finishBg.position.set(0, 0);
     finishFrameContainer.addChild(finishBg);
 
     var WinTextStyle = new PIXI.TextStyle({
@@ -499,7 +499,7 @@ function finishScreen() {
         fill: "#f45b4e"
     });
     var winText = new PIXI.Text("YOU WIN", WinTextStyle);
-    winText.position.set(297, 433);
+    winText.position.set(297, 33);
     finishFrameContainer.addChild(winText);
 
     var coinTextStyle = new PIXI.TextStyle({
@@ -508,15 +508,15 @@ function finishScreen() {
         fill: "#311d1f"
     });
     coinText = new PIXI.Text('25', coinTextStyle);
-    coinText.position.set(553, 533);
+    coinText.position.set(553, 133);
     coinText.anchor.set(1, 0);
     finishFrameContainer.addChild(coinText);
 
-    var winCoinSymbol = new PIXI.Sprite(loadRes('assets/img/location/magic_forest_coin_icon_big.png'));
-    winCoinSymbol.position.set(570, 560);
+    var winCoinSymbol = new PIXI.Sprite(loadImg('assets/img/location/magic_forest_coin_icon_big.png'));
+    winCoinSymbol.position.set(570, 160);
     finishFrameContainer.addChild(winCoinSymbol);
 
-    finishFrameContainer.position.set(47, 520);
+    finishFrameContainer.position.set(47, 220);
     app.stage.addChild(finishFrameContainer);
 }
 
@@ -549,7 +549,7 @@ function finishGameAnimation(newFrame) {
     startFrameContainer.y = 1525 + 400 * (1 - progress);
 }
 
-function finishGame() {
+function finishGame(loader, res) {
     startFrameContainer.getChildByName('redButton').interactive = true;
     greyGraphics.interactive = true;
 

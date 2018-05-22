@@ -1,5 +1,8 @@
 let app;
 let character;
+let backgrMask;
+let containerBgField;
+let generalContainer;
 let positions = [
     [214, 1366],
     [552, 1366],
@@ -35,7 +38,7 @@ PIXI.loader
     ])
     .load(setup);
 
-function loadRes(link) {
+function loadImg(link) {
     return PIXI.loader.resources[link].texture;
 }
 
@@ -43,8 +46,8 @@ function setup(loader, res) {
     createCanvas(loader, res);
     drawBg(loader,res);
     drawCharacter(loader,res);
-    startScreen();
-    finishScreen();
+    startScreen(loader, res);
+    finishScreen(loader, res);
 }
 
 function createCanvas(loader, res){
@@ -55,30 +58,30 @@ function createCanvas(loader, res){
 }
 
 function drawBg(loader,res){
-    let bg = new PIXI.Sprite( loadRes("assets/img/magic_forest_bg.jpg") );
+    let bg = new PIXI.Sprite( loadImg("assets/img/magic_forest_bg.jpg") );
     bg.x += -152;
     app.stage.addChild(bg);
 
-    let title = new PIXI.Sprite( loadRes("assets/img/magic_forest_win_up_to_100.png") );
+    let title = new PIXI.Sprite( loadImg("assets/img/magic_forest_win_up_to_100.png") );
     title.position.set(159, 40);
     app.stage.addChild(title);
 
-    let bg_description = new PIXI.Sprite( loadRes("assets/img/magic_forest_frame_for_text.png") );
+    let bg_description = new PIXI.Sprite( loadImg("assets/img/magic_forest_frame_for_text.png") );
     bg_description.position.set(56, 1043);
     bg_description.scale.set(0.98, 1);
     app.stage.addChild(bg_description);
 
-    let winner_bg = new PIXI.Sprite( loadRes("assets/img/magic_forest_winner_frame.png") );
+    let winner_bg = new PIXI.Sprite( loadImg("assets/img/magic_forest_winner_frame.png") );
     winner_bg.position.set(526, 140);
     app.stage.addChild(winner_bg);
 
-    let scratch_bg = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_scratch_frame_big.png') );
+    let scratch_bg = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_scratch_frame_big.png') );
     scratch_bg.position.set(799, 553);
     scratch_bg.anchor.set(0.5);
     app.stage.addChild(scratch_bg);
 
 
-    let scratch_frame_bg = loadRes("assets/img/location/magic_forest_scratch_frame.png");
+    let scratch_frame_bg = loadImg("assets/img/location/magic_forest_scratch_frame.png");
     let containerScratch = new PIXI.Container();
     app.stage.addChild(containerScratch);
 
@@ -106,9 +109,6 @@ let symbolList;
 let currentAnimation = 'idle';
 let winSymbol;
 let winCoin;
-let backgrMask;
-let containerBgField;
-let generalContainer;
 let openCount;
 
 function drawGame(loader,res) {
@@ -174,11 +174,11 @@ function drawGame(loader,res) {
         }
     }
 
-    drawDescription();
     renderTexture();
+    drawDescription();
     drawSymbols();
     drawBonusSymbol();
-    containerBgField.addChild(backgrMask);
+    generalContainer.addChild(backgrMask);
 }
 
 function drawCharacter(loader,res) {
@@ -217,7 +217,7 @@ function drawCharacter(loader,res) {
 function drawDescription() {
     let descr_container = new PIXI.Container();
     descr_container.position.set(88, 1071);
-    containerBgField.addChild(descr_container);
+    generalContainer.addChild(descr_container);
 
     let msgDescriptionStyle = new PIXI.TextStyle({
         fontFamily: "Arial",
@@ -233,7 +233,7 @@ function drawDescription() {
     win_prize.position.set(543, 0);
     descr_container.addChild(win_prize);
 
-    let msgDescriptionImg = new PIXI.Sprite( loadRes(elements[winSymbol]) );
+    let msgDescriptionImg = new PIXI.Sprite( loadImg(elements[winSymbol]) );
     msgDescriptionImg.position.set(453, -10);
     msgDescriptionImg.scale.set(0.3);
 
@@ -244,8 +244,8 @@ function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function drawSymbols(loader,res) {
-    let elementBg = loadRes("assets/img/magic_forest_frame.png");
+function drawSymbols() {
+    let elementBg = loadImg("assets/img/magic_forest_frame.png");
 
     for (let i = 0; i < 6; i++) {
         let filedBG = new PIXI.Sprite( elementBg );
@@ -256,7 +256,7 @@ function drawSymbols(loader,res) {
         app.stage.addChild(filedBG);
 
         let symbolID = symbolList[i];
-        let symbol = new PIXI.Sprite( loadRes(elements[symbolID]) );
+        let symbol = new PIXI.Sprite( loadImg(elements[symbolID]) );
         symbol.anchor.set(0.5);
         // symbol.x = (i % 3) * 335;
         // symbol.y = Math.floor(i / 3) * 330;
@@ -311,7 +311,7 @@ function drawSymbols(loader,res) {
                 else
                     changeAnimation('red_disappointed');
 
-                if(++openCount == 7) finishGame();
+                if(++openCount === 7) finishGame();
             }
 
         }
@@ -329,10 +329,10 @@ function drawSymbols(loader,res) {
 }
 
 function drawBonusSymbol() {
-    let bonusBG = new PIXI.Sprite( loadRes("assets/img/magic_forest_winner_frame.png") );
+    let bonusBG = new PIXI.Sprite( loadImg("assets/img/magic_forest_winner_frame.png") );
     bonusBG.position.set(526, 140);
 
-    let symbol = new PIXI.Sprite( loadRes(elements[winSymbol]) );
+    let symbol = new PIXI.Sprite( loadImg(elements[winSymbol]) );
     symbol.position.set(800, 590);
     symbol.anchor.set(0.5);
 
@@ -365,11 +365,11 @@ function drawBonusSymbol() {
         if (pos.y > maxPos.y) maxPos.y = pos.y;
         let length = ((minPos.x - maxPos.x) ** 2 + (minPos.y - maxPos.y) ** 2)**0.5;
         if (length >= 440) {
-            containerBgField.addChild(bonusBG, symbol)
+            generalContainer.addChild(bonusBG, symbol)
             graphics.destroy();
             changeAnimation('red_happy_bonus');
 
-            if(++openCount == 7) finishGame();
+            if(++openCount === 7) finishGame();
         }
     };
     graphics.on('touchmove', touchmove);
@@ -389,9 +389,9 @@ randomInt();
 
 let dragging = false;
 function renderTexture() {
-    let renderTexture = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
-    let renderTextureSprite = new PIXI.Sprite(renderTexture);
-    containerBgField.addChild(renderTextureSprite);
+    let renderTextureMask = PIXI.RenderTexture.create(app.screen.width, app.screen.height);
+    let renderTextureSprite = new PIXI.Sprite(renderTextureMask);
+    // containerBgField.addChild(renderTextureSprite);
     generalContainer.addChild(renderTextureSprite);
 
     backgrMask = new PIXI.Sprite();
@@ -421,7 +421,7 @@ function renderTexture() {
     function pointerMove(event) {
         if (dragging) {
             brush.position.copy(event.data.global);
-            app.renderer.render(brush, renderTexture, false, null, false);
+            app.renderer.render(brush, renderTextureMask, false, null, false);
         }
     }
 
@@ -454,7 +454,7 @@ function changeAnimation(key) {
 let startFrameContainer;
 let startAnimation;
 let greyGraphics;
-function startScreen() {
+function startScreen(loader, res) {
     // set a fill and a line style again and draw a rectangle
     greyGraphics = new PIXI.Graphics();
     greyGraphics.beginFill(0x000000, 0.6);
@@ -468,11 +468,11 @@ function startScreen() {
     startFrameContainer.x = 0;
     startFrameContainer.y = 1530;
 
-    let startFrameBg = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_frame2.png') );
+    let startFrameBg = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_frame2.png') );
     startFrameBg.position.set(0, 0);
     startFrameContainer.addChild(startFrameBg);
 
-    let redButton = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_button.png') );
+    let redButton = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_button.png') );
     redButton.interactive = true;
     redButton.position.set(25, 200);
     redButton.name = 'redButton';
@@ -509,24 +509,24 @@ function startScreen() {
     howToPlayText.position.set(437, 58);
     startFrameContainer.addChild(howToPlayText);
 
-    let coin = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_coin_icon_big.png') );
+    let coin = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_coin_icon_big.png') );
     // coin.scale.set(0.6);
     coin.position.set(726, 253);
     startFrameContainer.addChild(coin);
 
-    let helpSymbol = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_question_icon.png') );
+    let helpSymbol = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_question_icon.png') );
     helpSymbol.position.set(333, 60);
     startFrameContainer.addChild(helpSymbol);
 }
 
 let finishFrameContainer;
 let coinText;
-function finishScreen(){
+function finishScreen(loader, res){
     finishFrameContainer = new PIXI.Container();
     finishFrameContainer.visible = false;
 
-    let finishBg = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_frame1.png') );
-    finishBg.position.set(0, 400);
+    let finishBg = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_frame1.png') );
+    finishBg.position.set(0, 0);
     finishFrameContainer.addChild(finishBg);
 
     let WinTextStyle = new PIXI.TextStyle({
@@ -535,7 +535,7 @@ function finishScreen(){
         fill: "#f45b4e"
     });
     let winText = new PIXI.Text("YOU WIN", WinTextStyle);
-    winText.position.set(297, 433);
+    winText.position.set(297, 33);
     finishFrameContainer.addChild(winText);
 
     let coinTextStyle = new PIXI.TextStyle({
@@ -544,15 +544,15 @@ function finishScreen(){
         fill: "#311d1f"
     });
     coinText = new PIXI.Text('25', coinTextStyle);
-    coinText.position.set(553, 533);
+    coinText.position.set(553, 133);
     coinText.anchor.set(1, 0);
     finishFrameContainer.addChild(coinText);
 
-    let winCoinSymbol = new PIXI.Sprite( loadRes('assets/img/location/magic_forest_coin_icon_big.png') );
-    winCoinSymbol.position.set(570, 560);
+    let winCoinSymbol = new PIXI.Sprite( loadImg('assets/img/location/magic_forest_coin_icon_big.png') );
+    winCoinSymbol.position.set(570, 160);
     finishFrameContainer.addChild(winCoinSymbol);
 
-    finishFrameContainer.position.set(47, 520);
+    finishFrameContainer.position.set(47, 220);
     app.stage.addChild(finishFrameContainer);
 }
 
@@ -585,7 +585,7 @@ function finishGameAnimation(newFrame) {
     startFrameContainer.y = 1525 + 400*(1-progress);
 }
 
-function finishGame() {
+function finishGame(loader, res) {
     startFrameContainer.getChildByName('redButton').interactive = true;
     greyGraphics.interactive = true;
 
